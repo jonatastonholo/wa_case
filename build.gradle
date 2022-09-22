@@ -4,9 +4,10 @@ plugins {
     id 'java'
 }
 
-group = 'br.com.wa.case'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+group = 'br.com.wacase'
+version = "${appVersion}"
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 configurations {
     compileOnly {
@@ -16,6 +17,22 @@ configurations {
 
 repositories {
     mavenCentral()
+}
+
+
+
+springBoot {
+    mainClass = 'br.com.wacase.WacaseApplication'
+}
+
+jar {
+    archivesBaseName = 'app'
+    version = "${appVersion}"
+    manifest {
+        attributes(
+                'Main-Class': 'br.com.wacase.WacaseApplication'
+        )
+    }
 }
 
 dependencies {
