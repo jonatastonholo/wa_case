@@ -1,1 +1,14 @@
 
+blockHound:
+  enabled: ${BLOCKHOUND_ENABLED:false}
+  justPrintStackTrace: ${BLOCKHOUND_JUST_PRINT_STACKTRACE:false}
+
+spring:
+  h2:
+    console:
+      path: /h2-console/
+      enabled: true
+
+database:
+  h2:
+    initialization-script: db/sql/initialize.sql
