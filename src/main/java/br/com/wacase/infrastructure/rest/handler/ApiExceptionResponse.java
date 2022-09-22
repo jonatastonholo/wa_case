@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 record ApiExceptionResponse(int statusCode, String message) {
+
     private static final String INTERNAL_ERROR_MESSAGE = "Ops... Alguma coisa não está certo. Tente mais tarde.";
     public static ApiExceptionResponse internalServerError(final String message, final Throwable throwable) {
         log.error(message, throwable);

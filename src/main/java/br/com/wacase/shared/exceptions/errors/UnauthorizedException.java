@@ -3,21 +3,18 @@ package br.com.wacase.shared.exceptions.errors;
 import lombok.Getter;
 
 @Getter
-public class UnauthorizedException extends RuntimeException {
+public final class UnauthorizedException extends ApiException {
 
-    private final String message;
-
-    public UnauthorizedException(String message) {
+    public UnauthorizedException(final String message) {
         super(message);
-        this.message = message;
     }
-    public UnauthorizedException(Throwable throwable) {
+
+    public UnauthorizedException(final Throwable throwable) {
         super(throwable);
-        this.message = "Acesso negado";
     }
+
     public UnauthorizedException(String message, Throwable throwable) {
         super(throwable);
-        this.message = message;
     }
 
     public UnauthorizedException() {

@@ -2,6 +2,7 @@ package br.com.wacase.business.user.repository;
 
 import br.com.wacase.dto.SaveUserCommandDTO;
 import br.com.wacase.dto.UserDTO;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface UserRepository {
@@ -9,4 +10,6 @@ public interface UserRepository {
     Mono<UserDTO> findById(Long id);
 
     Mono<UserDTO> delete(UserDTO userDTO);
+
+    Flux<UserDTO> findAll();
 }

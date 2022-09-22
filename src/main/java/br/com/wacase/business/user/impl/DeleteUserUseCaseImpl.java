@@ -2,14 +2,11 @@ package br.com.wacase.business.user.impl;
 
 import br.com.wacase.business.user.DeleteUserUseCase;
 import br.com.wacase.business.user.repository.UserRepository;
-import br.com.wacase.dto.SaveUserCommandDTO;
 import br.com.wacase.dto.UserDTO;
 import br.com.wacase.shared.exceptions.errors.NotFoundException;
-import br.com.wacase.shared.exceptions.errors.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import reactor.core.publisher.Mono;
 
 @Service

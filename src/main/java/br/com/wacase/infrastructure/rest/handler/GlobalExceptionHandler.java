@@ -1,11 +1,17 @@
 package br.com.wacase.infrastructure.rest.handler;
 
 
-import static br.com.wacase.infrastructure.rest.handler.ApiExceptionResponse.*;
+import static br.com.wacase.infrastructure.rest.handler.ApiExceptionResponse.badRequestApiExceptionResponse;
+import static br.com.wacase.infrastructure.rest.handler.ApiExceptionResponse.internalServerError;
+import static br.com.wacase.infrastructure.rest.handler.ApiExceptionResponse.notFoundApiExceptionResponse;
+import static br.com.wacase.infrastructure.rest.handler.ApiExceptionResponse.unauthorizedApiExceptionResponse;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
+import br.com.wacase.shared.exceptions.errors.ApiException;
+import br.com.wacase.shared.exceptions.errors.NoContentException;
 import br.com.wacase.shared.exceptions.errors.NotFoundException;
 import br.com.wacase.shared.exceptions.errors.UnauthorizedException;
 import br.com.wacase.shared.exceptions.errors.ValidationException;
@@ -20,6 +26,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.codec.CodecException;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
@@ -61,13 +68,10 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
         return Mono.fromCallable(() ->
         switch (throwable) {
-            case NotFoundException e -> handleNotFoundException(e);
-            case ValidationException e -> handleValidationException(e);
+            case ApiException e -> handleApiException(e);
             case ServerWebInputException e -> handleServerWebInputException(e);
-            case UnauthorizedException e -> handleUnauthorizedException(e);
             case UnsupportedOperationException __ -> endpointNotImplemented(request);
             case ResponseStatusException __ -> endpointNotImplemented(request);
-
             default -> handleDefault(throwable);
         })
         .flatMap(response -> ServerResponse
@@ -76,8 +80,24 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                 .bodyValue(response));
     }
 
+    private ApiExceptionResponse handleApiException(final ApiException apiException) {
+        return switch (apiException) {
+            case NotFoundException e -> handleNotFoundException(e);
+            case NoContentException e -> handleNoContentException(e);
+            case ValidationException e -> handleValidationException(e);
+            case UnauthorizedException e -> handleUnauthorizedException(e);
+            default -> new ApiExceptionResponse(400, apiException.message());
+        };
+    }
+
+    private ApiExceptionResponse handleNoContentException(final NoContentException e) {
+        if (StringUtils.hasText(e.message())) {
+            log.error(e.message());
+        }
+        return new ApiExceptionResponse(NO_CONTENT.value(), e.getMessage());
+    }
+
     private ApiExceptionResponse handleUnauthorizedException(final UnauthorizedException unauthorizedException) {
-        log.error(unauthorizedException.getMessage());
         return unauthorizedApiExceptionResponse("Acesso negado");
     }
 
@@ -93,13 +113,11 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
     }
     
     private ApiExceptionResponse handleValidationException(final ValidationException validationException) {
-        log.error(validationException.getMessage());
-        return notFoundApiExceptionResponse(validationException.getMessage());
+        return badRequestApiExceptionResponse(validationException.getMessage());
     }
 
     
     private ApiExceptionResponse handleNotFoundException(final NotFoundException notFoundException) {
-        log.error(notFoundException.getMessage());
         return notFoundApiExceptionResponse(notFoundException.getMessage());
     }
 
@@ -123,7 +141,6 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                     -> internalServerError("Ocorreu um erro de decodificação não identificado.", codecException);
         };
     }
-
     
     private ApiExceptionResponse endpointNotImplemented(final ServerRequest request) {
         var msg = "Endpoint [" + request.method() +":"+ request.path() + "] não implementado.";

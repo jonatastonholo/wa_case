@@ -1,6 +1,5 @@
 package br.com.wacase.business.user.impl;
 
-import br.com.wacase.business.user.CreateUserUseCase;
 import br.com.wacase.business.user.UpdateUserUseCase;
 import br.com.wacase.business.user.repository.UserRepository;
 import br.com.wacase.dto.SaveUserCommandDTO;

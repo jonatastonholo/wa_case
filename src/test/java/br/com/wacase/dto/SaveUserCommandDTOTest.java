@@ -10,14 +10,14 @@ class SaveUserCommandDTOTest {
     @DisplayName("Dado um dto válido, não deve lançar exception")
     void validate01() {
         Assertions.assertDoesNotThrow(()
-                -> new SaveUserCommandDTO("Jonatas", "12354"));
+                -> new SaveUserCommandDTO(null, "Jonatas", "12354", null));
     }
 
     @Test
     @DisplayName("Dado um dto sem nome, deve lançar exception")
     void validate02() {
         ValidationException exception = Assertions.assertThrows(ValidationException.class, ()
-                -> new SaveUserCommandDTO(null, "12354"));
+                -> new SaveUserCommandDTO(null, null,"12354", null));
 
         Assertions.assertEquals("Nome é obrigatório", exception.message());
     }
@@ -26,7 +26,7 @@ class SaveUserCommandDTOTest {
     @DisplayName("Dado um dto sem nome, deve lançar exception")
     void validate03() {
         ValidationException exception = Assertions.assertThrows(ValidationException.class, ()
-                -> new SaveUserCommandDTO("Jonatas", null));
+                -> new SaveUserCommandDTO(null, "Jonatas", null, null));
 
         Assertions.assertEquals("Documento é obrigatório", exception.message());
     }

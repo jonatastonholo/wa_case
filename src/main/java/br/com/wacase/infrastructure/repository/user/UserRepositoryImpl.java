@@ -6,6 +6,7 @@ import br.com.wacase.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -45,5 +46,12 @@ public class UserRepositoryImpl implements UserRepository {
                 .flatMap(userReactiveRepository::deleteById)
                 .map(__ -> userDTO)
                 ;
+    }
+
+    @Override
+    public Flux<UserDTO> findAll() {
+        return userReactiveRepository
+                .findAll()
+                .map(UserEntity::toUserDTO);
     }
 }
