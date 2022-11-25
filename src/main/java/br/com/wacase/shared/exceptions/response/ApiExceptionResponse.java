@@ -1,4 +1,4 @@
-package br.com.wacase.shared.exceptions.handler;
+package br.com.wacase.shared.exceptions.response;
 
 import lombok.extern.slf4j.Slf4j;
 
